@@ -1,0 +1,30 @@
+name: Permanent 24/7 Hermes Bot
+
+on:
+  push:
+    branches: [ main, master ]
+  schedule:
+    - cron: '*/15 * * * *' 
+  workflow_dispatch: 
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Python Dependencies
+      run: |
+        pip install python-telegram-bot requests flask
+
+    - name: Run Telegram Bot In Infinite Loop
+      env:
+        OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      run: |
+        timeout 600s python bot.py || true
